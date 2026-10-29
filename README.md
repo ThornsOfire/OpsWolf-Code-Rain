@@ -45,7 +45,9 @@ Work is bounded at 30 drawn frames/second, 140 columns, 1,200 glyph draws/frame,
 | `index.html`, `style.css` | Standalone layout and accessible controls |
 | `serve.mjs` | Read-only loopback static server |
 
-`CodeRain(container, settings, {onTransition, onState})` creates an owned canvas. It exposes `setSettings`, `setPaused`, `startTransition`, `stopTransition`, `state`, and `dispose`. An integration must provide the container, own persistence and call dispose. The renderer has no Codex imports or global application styling. A future Cursadex adapter must use its normal verified plugin/package lifecycle; standalone success does not certify that integration.
+`CodeRain(container, settings, {onTransition, onState, frameScheduler})` creates an owned canvas. It exposes `setSettings`, `setPaused`, `startTransition`, `stopTransition`, `state`, and `dispose`. An integration must provide the container, own persistence and call dispose. The renderer has no Codex imports or global application styling. A future Cursadex adapter must use its normal verified plugin/package lifecycle; standalone success does not certify that integration.
+
+An optional `frameScheduler` supplies `request(callback)` and `cancel(ticket)`. It follows animation-frame semantics: callbacks run asynchronously with a monotonic millisecond timestamp, each request returns a unique nonzero numeric ticket (negative tickets are supported), and cancellation must tolerate an already settled ticket or zero. Hosts can park frames during their own transitions without patching global browser functions. The default uses the container window's animation-frame API. Supplying only one half of the pair is rejected before a canvas is created.
 
 ## Checks
 
@@ -56,7 +58,7 @@ node tests/browser.test.mjs
 
 Browser checks use installed Chrome, a disposable owned profile and loopback server. They never download a browser. Set `CHROME_PATH` to its executable if it is not at the default Windows Chrome path. Node 22.18 and installed Chrome were used for the current candidate.
 
-Current evidence: **9 state tests and 31 browser checks passed**. Pointer/keyboard journeys cover settings, preset capture, save/reload, reset and error messages. Renderer checks cover pause/resume, transitions, reduced motion, high contrast, real intersection-based suspension, resource caps, cleanup and uncaught exceptions. Hidden-document and back/forward-cache lifecycle events are simulated; physical GPU behavior and native Cursadex embedding remain unverified. Desktop, daylight, narrow and high-contrast captures were visually reviewed. Results/captures live under ignored `artifacts/`.
+Current evidence: **9 state tests and 37 browser checks passed**. Pointer/keyboard journeys cover settings, preset capture, save/reload, reset and error messages. Renderer checks cover pause/resume, transitions, reduced motion, high contrast, real intersection-based suspension, resource caps, cleanup and uncaught exceptions. Hidden-document and back/forward-cache lifecycle events are simulated; physical GPU behavior and native Cursadex embedding remain unverified. Desktop, daylight, narrow and high-contrast captures were visually reviewed. Results/captures live under ignored `artifacts/`.
 
 ## Credit
 

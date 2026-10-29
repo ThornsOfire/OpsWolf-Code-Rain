@@ -4,6 +4,7 @@
 
 ### Added
 
+- Optional frame scheduler capability for embedding hosts to hold/release animation without replacing browser globals. Pause, hidden lifecycle and disposal cancel host-owned frame tickets.
 - Standalone Canvas 2D code rain with independent rain/interface colors, four presets, custom characters and bounded motion controls.
 - Preset blending with duration, holds, looping, pause/resume and stop-at-current-values behavior.
 - Eight personal preset slots, explicit local save, current/interface resets and readable storage/validation failures.

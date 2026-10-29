@@ -71,6 +71,17 @@ try{
   await ev(`window.before=rain.state.frames`);await delay(1100);await check('Observed fixture frame rate stays under its cap with scheduling tolerance',`rain.state.frames-before<=34&&rain.state.frames>before`);
   await ev(`rain.dispose();window.stopped=rain.state.frames;dispatchEvent(new Event('resize'));document.dispatchEvent(new Event('visibilitychange'))`);await delay(150);
   await check('Dispose removes owned canvas and cancels future work',`rain.state.disposed&&!rain.state.animating&&rain.state.frames===stopped&&document.querySelectorAll('canvas').length===0`);
+  await ev(`window.queue=new Map();window.ticket=-1;window.cancelled=[];window.scheduler={request(callback){const id=ticket--;queue.set(id,callback);return id},cancel(id){cancelled.push(id);queue.delete(id)}};window.held=new CodeRain(document.getElementById('fixture'),presets[0].rain,{frameScheduler:scheduler});void 0`);await delay(100);
+  await check('Host scheduler can hold all frames without changing browser globals',`queue.size===1&&held.state.frames===0&&held.state.animating&&typeof requestAnimationFrame==='function'`);
+  await ev(`window.flush=time=>{const [id,callback]=queue.entries().next().value;queue.delete(id);callback(time)};flush(100);flush(150)`);
+  await check('Releasing host frames draws and queues exactly one successor',`held.state.frames===1&&queue.size===1`);
+  await ev(`held.setPaused(true)`);
+  await check('Pause cancels a host-owned negative frame ticket',`queue.size===0&&!held.state.animating&&cancelled.some(id=>id<0)`);
+  await ev(`held.setPaused(false);Object.defineProperty(document,'hidden',{configurable:true,value:true});document.dispatchEvent(new Event('visibilitychange'))`);
+  await check('Hidden lifecycle also cancels host-scheduled work',`queue.size===0&&!held.state.animating`);
+  await ev(`delete document.hidden;document.dispatchEvent(new Event('visibilitychange'));held.dispose()`);
+  await check('Dispose cancels held callbacks and removes the hosted canvas',`queue.size===0&&!document.querySelector('canvas')&&held.state.disposed`);
+  await check('Incomplete scheduler is rejected before adding a canvas',`(()=>{try{new CodeRain(document.getElementById('fixture'),presets[0].rain,{frameScheduler:{request:()=>1}});return false}catch(e){return e instanceof TypeError&&!document.querySelector('canvas')}})()`);
   assert.deepEqual(browser.errors,[],'No uncaught exceptions in user journeys');checks.push('No uncaught browser exceptions');
   await writeFile(resolve(out,'browser-results.json'),JSON.stringify({passed:true,checks},null,2));console.log(JSON.stringify({passed:true,checks},null,2));
 }finally{await browser.close();await new Promise(r=>server.close(r));}
