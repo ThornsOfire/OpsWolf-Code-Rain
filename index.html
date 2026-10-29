@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'">
+  <title>OpsWolf · Code Rain</title><link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <section class="stage" aria-label="Code rain preview">
+      <div id="rain" aria-hidden="true"></div>
+      <header><span class="mark" aria-hidden="true">OW /</span><span>OPS WOLF <b>CODE RAIN</b></span><span class="pill">LOCAL PLAYGROUND</span></header>
+      <div class="stage-copy"><p class="eyebrow">A little signal in the dark.</p><h1>Your colors.<br>Your current.</h1><p>Build a background that moves at your pace. The rain and your interface each have their own controls.</p><button id="pause" aria-pressed="false">Pause animation</button></div>
+      <footer><span id="motion-state">Starting preview…</span><span>Canvas 2D · bounded at 30 fps</span></footer>
+    </section>
+    <aside aria-label="Rain controls">
+      <div class="panel-heading"><h2>Control room</h2><p>Tune it, blend it, make it yours.</p></div>
+      <div id="status" role="status" aria-live="polite"></div>
+      <section><h3>Start somewhere</h3><label for="preset">Preset</label><select id="preset"></select><label class="check"><input id="coordinate" type="checkbox"> Match interface when applying a preset</label><div class="actions"><button id="apply">Apply preset</button><button id="remove-preset" disabled>Remove personal</button></div></section>
+      <details open><summary>Rain palette</summary><div id="rain-colors" class="color-grid"></div></details>
+      <details open><summary>Motion &amp; texture</summary><div id="sliders"></div><label for="glyphs">Characters (1–64 unique, no spaces)</label><input id="glyphs" type="text" maxlength="128" spellcheck="false"><p class="hint">Glyph choice is discrete; blends switch it halfway through.</p></details>
+      <details><summary>Blend between settings</summary><p class="hint">From the current rain to the selected preset. Interface colors stay fixed.</p><label for="duration">Transition seconds</label><input id="duration" type="number" min="0.5" max="60" step="0.5" value="8"><label for="hold">Hold seconds (loop)</label><input id="hold" type="number" min="0" max="120" step="1" value="3"><label class="check"><input id="loop" type="checkbox"> Loop there and back</label><div class="actions"><button id="blend">Start blend</button><button id="stop">Stop blend</button></div><output id="blend-state">No blend running</output></details>
+      <details><summary>Interface palette</summary><div id="ui-colors" class="color-grid"></div><p class="hint">Independent from the rain. Low-contrast text and focus colors are rejected.</p><button id="reset-ui">Reset interface</button></details>
+      <section><h3>Keep your settings</h3><label for="preset-name">New preset name</label><input id="preset-name" maxlength="32" placeholder="Midnight signal"><button id="capture">Capture as preset</button><p class="hint">Up to eight personal presets. Capture stays in this session until you save.</p><div class="actions"><button class="primary" id="save">Save locally</button><button id="reset">Reset current</button></div><p class="hint">Save keeps the current rain, interface and personal presets in this browser. Reset changes only this session until saved. No account, network or tracking.</p></section>
+    </aside>
+  </main>
+  <script type="module" src="src/app.mjs"></script>
+</body>
+</html>
