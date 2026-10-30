@@ -17,4 +17,4 @@
 
 ### Limitations
 
-- Cursadex integration and physical/native-host verification are pending. This is a local candidate, not an installer or a published release.
+- The separate Cursadex adapter is included in the owner's activated local test build and has integration fixtures; real-host readability, interaction and startup acceptance remain pending. Standalone 0.1.0 and host plugin 0.1.1 are separate identities. Source and downloadable plugin publication remain unapproved; this is not an installer or published release.

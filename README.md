@@ -4,7 +4,7 @@ We finally got the Matrix writing lol.
 
 A small, standalone code-rain playground. Change the glyphs, colors and motion; blend between presets; keep the interface readable. It runs locally with browser Canvas 2D and has no package dependencies, account, analytics or external assets.
 
-**Local candidate, not a published release.** Cursadex integration is separate and not installed. This project does not change Codex, your desktop wallpaper or Windows settings.
+**Local candidate, not a published release.** Cursadex's separate adapter is included in the owner's activated test build; real document readability/startup remain pending. This standalone playground does not change Codex, your desktop wallpaper or Windows settings. See [verification and the live checklist](docs/verification.md).
 
 ## Run it
 
@@ -45,7 +45,7 @@ Work is bounded at 30 drawn frames/second, 140 columns, 1,200 glyph draws/frame,
 | `index.html`, `style.css` | Standalone layout and accessible controls |
 | `serve.mjs` | Read-only loopback static server |
 
-`CodeRain(container, settings, {onTransition, onState, frameScheduler})` creates an owned canvas. It exposes `setSettings`, `setPaused`, `startTransition`, `stopTransition`, `state`, and `dispose`. An integration must provide the container, own persistence and call dispose. The renderer has no Codex imports or global application styling. A future Cursadex adapter must use its normal verified plugin/package lifecycle; standalone success does not certify that integration.
+`CodeRain(container, settings, {onTransition, onState, frameScheduler})` creates an owned canvas. It exposes `setSettings`, `setPaused`, `startTransition`, `stopTransition`, `state`, and `dispose`. An integration must provide the container, own persistence and call dispose. The renderer has no Codex imports or global application styling. The Cursadex adapter uses its normal verified plugin/package lifecycle; standalone success does not certify live embedding.
 
 An optional `frameScheduler` supplies `request(callback)` and `cancel(ticket)`. It follows animation-frame semantics: callbacks run asynchronously with a monotonic millisecond timestamp, each request returns a unique nonzero numeric ticket (negative tickets are supported), and cancellation must tolerate an already settled ticket or zero. Hosts can park frames during their own transitions without patching global browser functions. The default uses the container window's animation-frame API. Supplying only one half of the pair is rejected before a canvas is created.
 
@@ -59,6 +59,12 @@ node tests/browser.test.mjs
 Browser checks use installed Chrome, a disposable owned profile and loopback server. They never download a browser. Set `CHROME_PATH` to its executable if it is not at the default Windows Chrome path. Node 22.18 and installed Chrome were used for the current candidate.
 
 Current evidence: **9 state tests and 37 browser checks passed**. Pointer/keyboard journeys cover settings, preset capture, save/reload, reset and error messages. Renderer checks cover pause/resume, transitions, reduced motion, high contrast, real intersection-based suspension, resource caps, cleanup and uncaught exceptions. Hidden-document and back/forward-cache lifecycle events are simulated; physical GPU behavior and native Cursadex embedding remain unverified. Desktop, daylight, narrow and high-contrast captures were visually reviewed. Results/captures live under ignored `artifacts/`.
+
+## Versions and publication
+
+The standalone package is **0.1.0**, private and unreleased. Cursadex independently packages reviewed renderer bytes as plugin **0.1.1**; Cursadex's own fork version is separate again. These numbers identify different artifacts. Documentation edits do not automatically update the pinned renderer commit or package inside Cursadex.
+
+The public repository was created, but this local source has not been pushed while owner review is pending. An empty GitHub page does not mean local testing was skipped. Source push, a versioned release and a downloadable host plugin are separate actions requiring approval. The local server/tests never publish automatically.
 
 ## Credit
 
