@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import {CodeRain as Candidate} from '../src/renderer.mjs';
+function run(Renderer,hz,jitter){const draws=[];let at=0;const fake={frame:0,previous:0,nextDraw:0,time:0,transition:null,height:1080,phases:[],settings:{speed:7},canAnimate:()=>true,layout:()=>({cell:18,trail:24}),draw:()=>draws.push(at),scheduler:{request:()=>1}};for(let i=0;i<=Math.ceil(hz*6);i++){at=100+i*1000/hz+Math.sin(i*1.7)*jitter;Renderer.prototype.tick.call(fake,at)}const gaps=draws.slice(1).map((v,i)=>v-draws[i]);return{fps:draws.length/6,frames:draws.length,longestGapMs:Math.max(...gaps),animationSeconds:fake.time};}
+const report={scope:'Source cadence regression; no live app/settings access.',checks:[],cases:[]};
+for(const hz of [60,59.94,120,144])for(const jitter of [0,.2]){const candidate=run(Candidate,hz,jitter);assert.ok(candidate.fps>=29.8&&candidate.fps<=30.2,`${hz}/${jitter} steady 30fps`);assert.ok(candidate.longestGapMs<=1000/30+1000/hz+.5);assert.ok(candidate.animationSeconds<=6.05&&candidate.animationSeconds>=5.9,'No doubled elapsed time');report.cases.push({hz,jitter,candidate});report.checks.push(`Cadence and elapsed time ${hz}Hz jitter ${jitter}`)}
+// A real late frame must be one bounded update, never a catch-up rendering loop.
+let draws=0;const steps=[];const fake={frame:0,previous:100,nextDraw:133.333333,time:0,height:1080,phases:[],settings:{speed:7},canAnimate:()=>true,layout:()=>({cell:18,trail:24}),draw:()=>draws++,scheduler:{request:()=>1},transition:{advance:delta=>{steps.push(delta);return{rain:{speed:7},done:false,phase:'Transitioning'}}},onTransition:()=>{}};
+Candidate.prototype.tick.call(fake,5100);assert.equal(draws,1);assert.equal(steps[0],100);assert.ok(fake.nextDraw>5100);Candidate.prototype.tick.call(fake,5101);assert.equal(draws,1);report.checks.push('Long stall: one capped update and no catch-up burst');
+// Resuming starts a fresh deadline; time spent paused is not a blend jump.
+fake.previous=0;fake.nextDraw=0;Candidate.prototype.tick.call(fake,9000);assert.equal(draws,1);Candidate.prototype.tick.call(fake,9034);assert.equal(draws,2);assert.equal(steps.at(-1),34);report.checks.push('Resume: no paused-time catch-up');
+report.passed=true;console.log(JSON.stringify(report,null,2));

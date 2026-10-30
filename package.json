@@ -3,5 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "scripts": {"test": "node --test tests/state.test.mjs", "start": "node serve.mjs"}
+  "scripts": {
+    "test": "node --test tests/state.test.mjs",
+    "start": "node serve.mjs",
+    "test:cadence": "node --test tests/cadence.test.mjs"
+  }
 }

@@ -53,6 +53,7 @@ An optional `frameScheduler` supplies `request(callback)` and `cancel(ticket)`. 
 
 ```sh
 node --test tests/state.test.mjs
+node --test tests/cadence.test.mjs
 node tests/browser.test.mjs
 ```
 
@@ -69,3 +70,5 @@ The public repository was created, but this local source has not been pushed whi
 ## Credit
 
 The browser test driver is adapted from the MIT-licensed Cursadex / Code-Codex test harness. See LICENSE. The renderer, playground and presets are independent from the native Codex application; this is an unofficial community project.
+
+Cadence correction source notes and limits: [cadence](docs/cadence.md). No published renderer/plugin update is implied.
